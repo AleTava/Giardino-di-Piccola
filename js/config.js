@@ -59,5 +59,5 @@ window.GIARDINO_CONFIG = {
 
   // Modalità debug: mostra in basso dei pulsanti per saltare avanti/indietro
   // nei giorni senza dover aspettare. METTI A false PRIMA DI REGALARGLIELO.
-  debug: false
+  debug: true
 };
