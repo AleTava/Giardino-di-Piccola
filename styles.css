@@ -1,0 +1,411 @@
+/* =========================================================================
+   Il Giardino — stile acquerello romantico
+   ======================================================================= */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Georgia", "Cormorant Garamond", "Palatino", serif;
+  color: #3a2a1a;
+  overflow: hidden;
+  background: #cfe8f5;
+}
+
+/* ---------- SCENE ---------- */
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---------- CIELO ---------- */
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    #a6d6f0 0%,
+    #c8e6f4 40%,
+    #e8f4e0 72%,
+    #f4f0d8 100%);
+}
+
+.sun {
+  position: absolute;
+  top: 8%; right: 12%;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(255,240,200,0.95) 0%, rgba(255,240,200,0.3) 55%, rgba(255,240,200,0) 75%);
+  border-radius: 50%;
+  filter: blur(1px);
+  animation: sun-glow 7s ease-in-out infinite alternate;
+}
+
+@keyframes sun-glow {
+  from { transform: scale(1); opacity: 0.9; }
+  to   { transform: scale(1.08); opacity: 1; }
+}
+
+/* Nuvole: 3 forme che driftano lentamente */
+.cloud {
+  position: absolute;
+  width: 280px; height: 80px;
+  background:
+    radial-gradient(ellipse at 30% 50%, #ffffff 60%, transparent 62%) no-repeat,
+    radial-gradient(ellipse at 60% 40%, #ffffff 55%, transparent 58%) no-repeat,
+    radial-gradient(ellipse at 80% 60%, #ffffff 50%, transparent 55%) no-repeat;
+  opacity: 0.85;
+  filter: blur(1.5px);
+}
+
+.cloud-1 { top: 12%; left: -300px; animation: drift 90s linear infinite; }
+.cloud-2 { top: 22%; left: -300px; animation: drift 130s linear infinite; animation-delay: -40s; transform: scale(0.7); }
+.cloud-3 { top: 6%;  left: -300px; animation: drift 160s linear infinite; animation-delay: -80s; transform: scale(1.2); }
+
+@keyframes drift {
+  from { transform: translateX(0) scale(var(--s, 1)); }
+  to   { transform: translateX(calc(100vw + 600px)) scale(var(--s, 1)); }
+}
+
+/* ---------- PRATO ---------- */
+.meadow {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 42%;
+  pointer-events: none;
+}
+.meadow svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- BOUQUET AREA ---------- */
+.bouquet-area {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.title-card {
+  margin-bottom: 28px;
+  padding: 10px 28px;
+  background: rgba(255, 253, 246, 0.78);
+  border: 1px solid rgba(180, 140, 100, 0.35);
+  border-radius: 40px;
+  font-size: 1.35rem;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  color: #6a4a2a;
+  box-shadow: 0 6px 24px rgba(120, 90, 60, 0.12);
+  backdrop-filter: blur(4px);
+}
+
+.title-name {
+  font-weight: bold;
+  color: #b06088;
+  font-family: "Dancing Script", "Georgia", cursive;
+  font-size: 1.5rem;
+}
+
+.bouquet {
+  position: relative;
+  width: 380px;
+  height: 420px;
+}
+
+/* ---------- VASO ---------- */
+.vase {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 180px;
+  z-index: 10;
+  filter: drop-shadow(0 10px 14px rgba(90, 60, 30, 0.28));
+}
+.vase svg { width: 100%; height: 100%; }
+
+/* Area cliccabile invisibile che copre vaso e zona fiori */
+.vase-click {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 400px;
+  background: transparent;
+  border: none;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><g><path d='M 8 20 L 28 20 L 28 12 L 36 12 L 36 32 L 28 32 L 28 24 L 12 24 Q 6 24 6 30 L 6 38 L 10 38 L 10 32 Q 10 28 14 28 L 28 28' stroke='%23446688' stroke-width='2' fill='%23e8f0f8'/><circle cx='30' cy='40' r='2' fill='%234488cc'/></g></svg>") 24 24, pointer;
+  z-index: 20;
+}
+.vase-click:hover ~ .vase { transform: translateX(-50%) translateY(-2px); transition: transform .2s ease; }
+.vase-click:active   ~ .drops .waterdrop { }   /* hook per animazioni future */
+
+/* ---------- FIORI ---------- */
+.flowers {
+  position: absolute;
+  left: 50%;
+  bottom: 98px;
+  transform: translateX(-50%);
+  width: 390px;
+  height: 340px;
+  pointer-events: none;
+}
+
+.flower {
+  position: absolute;
+  left: calc(50% + var(--x, 0%));
+  bottom: calc(0% + var(--y, 0%));
+  width: 152px;
+  height: 308px;
+  transform: translateX(-50%) rotate(var(--rot, 0deg)) scale(0);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  transition: transform 1.4s cubic-bezier(.2,.8,.25,1), opacity .9s ease;
+  filter: drop-shadow(0 14px 16px rgba(69, 46, 22, 0.1)) drop-shadow(0 4px 6px rgba(69, 46, 22, 0.14));
+  will-change: transform, opacity;
+}
+.flower svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transform-origin: 50% 100%;
+}
+
+.flower.bloomed {
+  transform: translateX(-50%) rotate(var(--rot, 0deg)) scale(var(--scale, 1));
+  opacity: 1;
+}
+
+.flower.bloomed:not(.just-bloomed) svg {
+  animation: flower-float var(--float-duration, 7.5s) ease-in-out infinite alternate;
+}
+
+/* Animazione "appena sbocciato": piccola oscillazione dolce */
+.flower.just-bloomed {
+  animation: bloom-sway 2.2s ease-out;
+}
+@keyframes bloom-sway {
+  0%   { transform: translateX(-50%) rotate(var(--rot, 0deg)) scale(0); }
+  60%  { transform: translateX(-50%) rotate(calc(var(--rot, 0deg) + 6deg)) scale(calc(var(--scale, 1) * 1.12)); }
+  80%  { transform: translateX(-50%) rotate(calc(var(--rot, 0deg) - 3deg)) scale(calc(var(--scale, 1) * 0.98)); }
+  100% { transform: translateX(-50%) rotate(var(--rot, 0deg)) scale(var(--scale, 1)); }
+}
+
+@keyframes flower-float {
+  0%   { transform: translateX(0px) translateY(0px); }
+  33%  { transform: translateX(2px)  translateY(-2px); }
+  66%  { transform: translateX(-1px) translateY(-3px); }
+  100% { transform: translateX(1px)  translateY(-1px); }
+}
+
+/* Stato "hanno sete": fiori un po' opachi, lievemente pendenti */
+.scene.thirsty .flower.bloomed {
+  filter: drop-shadow(0 10px 12px rgba(69, 46, 22, 0.12)) saturate(0.8) brightness(0.95);
+  transform: translateX(-50%) rotate(calc(var(--rot, 0deg) + 3deg)) scale(calc(var(--scale, 1) * 0.97)) translateY(5px);
+}
+
+.scene.thirsty .flower.bloomed svg {
+  animation-duration: calc(var(--float-duration, 7.5s) * 1.25);
+}
+
+/* ---------- GOCCE D'ACQUA ---------- */
+.drops {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+.waterdrop {
+  position: absolute;
+  top: 30px;
+  width: 8px; height: 12px;
+  background: radial-gradient(ellipse at 30% 30%, #aee0f4 0%, #5ba8d6 70%, #3a80b4 100%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0;
+  animation: drop-fall 1.2s ease-in forwards;
+  filter: drop-shadow(0 1px 1px rgba(40, 90, 140, 0.4));
+}
+@keyframes drop-fall {
+  0%   { opacity: 0; transform: translateY(-10px) scale(0.6); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(180px) scale(1.1); }
+}
+
+/* ---------- HUD ---------- */
+.day-counter {
+  position: absolute;
+  top: 22px; left: 24px;
+  padding: 8px 18px;
+  background: rgba(255, 253, 246, 0.78);
+  border: 1px solid rgba(180, 140, 100, 0.3);
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #6a4a2a;
+  z-index: 30;
+  backdrop-filter: blur(3px);
+}
+
+/* ---------- MESSAGGIO ---------- */
+.message-card {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 520px;
+  padding: 18px 26px;
+  background: rgba(255, 253, 246, 0.95);
+  border: 1px solid rgba(180, 140, 100, 0.4);
+  border-radius: 18px;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: #5a3a22;
+  box-shadow: 0 10px 32px rgba(120, 90, 60, 0.2);
+  transition: top .7s cubic-bezier(.2,.8,.25,1), opacity .5s ease;
+  opacity: 0;
+  z-index: 40;
+  text-align: center;
+  font-style: italic;
+}
+.message-card.visible {
+  top: 110px;
+  opacity: 1;
+}
+.message-card.bloom {
+  border-color: #d49aa8;
+  background: linear-gradient(180deg, #fffdf6 0%, #fef0f4 100%);
+}
+.message-card.already {
+  border-color: #9ac0d4;
+  background: linear-gradient(180deg, #fffdf6 0%, #eaf4fa 100%);
+}
+
+/* ---------- SORPRESA FINALE ---------- */
+.surprise-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255, 240, 220, 0.92) 0%, rgba(240, 200, 180, 0.95) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+  z-index: 100;
+  padding: 40px;
+}
+.surprise-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.surprise-card {
+  max-width: 640px;
+  width: 100%;
+  background: rgba(255, 253, 246, 0.96);
+  border: 1px solid rgba(180, 140, 100, 0.4);
+  border-radius: 24px;
+  padding: 48px 52px;
+  box-shadow: 0 20px 60px rgba(120, 90, 60, 0.3);
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 1.4s cubic-bezier(.2,.8,.25,1);
+  max-height: 86vh;
+  overflow-y: auto;
+}
+.surprise-overlay.visible .surprise-card { transform: scale(1); }
+.surprise-title {
+  font-size: 2.2rem;
+  font-family: "Dancing Script", "Georgia", cursive;
+  color: #b06088;
+  margin: 0 0 24px 0;
+  font-weight: normal;
+}
+.surprise-image { margin: 0 0 24px 0; }
+.surprise-image img {
+  max-width: 100%;
+  max-height: 280px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(120, 90, 60, 0.2);
+}
+.surprise-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4a2a12;
+  text-align: left;
+  font-style: italic;
+}
+.surprise-content p { margin: 0 0 18px 0; }
+.surprise-close {
+  margin-top: 28px;
+  padding: 10px 28px;
+  background: #b06088;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .2s ease, transform .15s ease;
+}
+.surprise-close:hover { background: #94486e; transform: scale(1.04); }
+
+/* ---------- DEBUG PANEL ---------- */
+.debug-panel {
+  position: fixed;
+  top: 8px; left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background: rgba(40, 30, 20, 0.78);
+  color: #fff3c4;
+  border-radius: 20px;
+  font-family: monospace;
+  font-size: 11px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  z-index: 50;
+  opacity: 0.55;
+  transition: opacity .2s ease;
+  white-space: nowrap;
+  max-width: calc(100vw - 16px);
+  overflow: hidden;
+}
+.debug-panel:hover { opacity: 1; }
+.debug-panel .dbg-label { font-weight: bold; color: #f4b838; letter-spacing: 0.5px; }
+.debug-panel button {
+  padding: 3px 8px;
+  background: #5a7898;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.debug-panel button:hover { background: #7a98b8; }
+.debug-panel .dbg-info { opacity: 0.75; margin-left: 6px; font-size: 10px; }
+
+/* Su schermi molto stretti, nascondi il testo di info */
+@media (max-width: 640px) {
+  .debug-panel .dbg-info { display: none; }
+}
+
+/* ---------- RESPONSIVE MINIMO ---------- */
+@media (max-width: 720px) {
+  .bouquet { width: 300px; height: 340px; }
+  .vase { width: 180px; height: 135px; }
+  .vase-click { width: 260px; height: 320px; }
+  .flowers { width: 312px; height: 274px; bottom: 72px; }
+  .flower { width: 126px; height: 254px; }
+  .title-card { font-size: 1.1rem; padding: 8px 20px; }
+  .title-name { font-size: 1.25rem; }
+  .surprise-card { padding: 32px 24px; }
+  .surprise-title { font-size: 1.7rem; }
+}

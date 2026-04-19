@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Il Giardino</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <main id="scene" class="scene">
+
+    <!-- Cielo con nuvole animate -->
+    <div class="sky" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+    </div>
+
+    <!-- Prato (SVG inline con colline morbide) -->
+    <div class="meadow" aria-hidden="true">
+      <svg viewBox="0 0 1600 500" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grassGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#b4d47a"/>
+            <stop offset="60%" stop-color="#8ab858"/>
+            <stop offset="100%" stop-color="#6a983e"/>
+          </linearGradient>
+        </defs>
+        <path d="M 0,180 Q 300,100 600,160 T 1200,140 T 1600,180 L 1600,500 L 0,500 Z"
+              fill="url(#grassGrad)"/>
+        <path d="M 0,260 Q 400,210 800,240 T 1600,240 L 1600,500 L 0,500 Z"
+              fill="#78a840" opacity="0.55"/>
+        <!-- Piccoli fiorellini sparsi sul prato -->
+        <g fill="#fff3c4">
+          <circle cx="120" cy="320" r="3"/><circle cx="260" cy="380" r="2.5"/>
+          <circle cx="440" cy="340" r="3"/><circle cx="620" cy="400" r="2.5"/>
+          <circle cx="900" cy="350" r="3"/><circle cx="1080" cy="410" r="2.5"/>
+          <circle cx="1280" cy="360" r="3"/><circle cx="1460" cy="390" r="2.5"/>
+        </g>
+        <g fill="#f4a8c4">
+          <circle cx="200" cy="400" r="2.5"/><circle cx="540" cy="420" r="2"/>
+          <circle cx="820" cy="420" r="2.5"/><circle cx="1180" cy="380" r="2"/>
+          <circle cx="1400" cy="420" r="2.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Il bouquet al centro -->
+    <div class="bouquet-area">
+      <div class="title-card">
+        Il giardino di <span id="title-name" class="title-name">te</span>
+      </div>
+
+      <div class="bouquet">
+        <div id="flowers" class="flowers"></div>
+        <div id="vase" class="vase"></div>
+        <div id="drops" class="drops" aria-hidden="true"></div>
+        <!-- Area cliccabile invisibile sul vaso -->
+        <button id="vase-click" class="vase-click" aria-label="Dai acqua al bouquet"></button>
+      </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="day-counter" class="day-counter"></div>
+    <!-- Card messaggio -->
+    <div id="message" class="message-card" role="status" aria-live="polite"></div>
+
+    <!-- Overlay sorpresa finale -->
+    <div id="surprise" class="surprise-overlay" role="dialog" aria-modal="true" aria-labelledby="surprise-title">
+      <div class="surprise-card">
+        <h1 id="surprise-title" class="surprise-title"></h1>
+        <div class="surprise-image"></div>
+        <div class="surprise-content"></div>
+        <button id="surprise-close" class="surprise-close">Chiudi</button>
+      </div>
+    </div>
+
+    <!-- Debug panel (visibile solo se CONFIG.debug = true) -->
+    <div id="debug" class="debug-panel" style="display:none"></div>
+
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/garden.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
