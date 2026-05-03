@@ -354,6 +354,21 @@ html, body {
   transition: background .2s ease, transform .15s ease;
 }
 .surprise-close:hover { background: #94486e; transform: scale(1.04); }
+.surprise-restart {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 22px;
+  background: transparent;
+  color: #9a7858;
+  border: 1px solid rgba(180, 140, 100, 0.5);
+  border-radius: 24px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-style: italic;
+  transition: background .2s ease, color .2s ease, transform .15s ease;
+}
+.surprise-restart:hover { background: rgba(180, 140, 100, 0.12); color: #6a4a2a; transform: scale(1.04); }
 
 /* ---------- DEBUG PANEL ---------- */
 .debug-panel {
