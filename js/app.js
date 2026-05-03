@@ -16,6 +16,7 @@
   const messageCard = document.getElementById("message");
   const surpriseOverlay = document.getElementById("surprise");
   const surpriseClose = document.getElementById("surprise-close");
+  const surpriseRestart = document.getElementById("surprise-restart");
   const titleNameEl = document.getElementById("title-name");
   const dayCounterEl = document.getElementById("day-counter");
   const debugPanel = document.getElementById("debug");
@@ -34,6 +35,12 @@
 
     clickTarget.addEventListener("click", onWater);
     surpriseClose.addEventListener("click", () => G.hideFinalSurprise(surpriseOverlay));
+    surpriseRestart.addEventListener("click", () => {
+      S.reset();
+      state = S.load();
+      G.hideFinalSurprise(surpriseOverlay);
+      refreshUI();
+    });
     if (CONFIG.debug) {
       mountDebugPanel();
     }
