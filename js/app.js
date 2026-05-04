@@ -6,6 +6,7 @@
   const CONFIG = window.GIARDINO_CONFIG;
   const S = window.GIARDINO_STATE;
   const G = window.GIARDINO_GARDEN;
+  const W = window.GIARDINO_WEATHER;
 
   // ---- DOM refs ----------------------------------------------------------
   const root = document.getElementById("scene");
@@ -23,6 +24,8 @@
 
   // ---- State -------------------------------------------------------------
   let state = S.load();
+  let currentWeather = null;
+  let debugWeatherOverride = null; // { time, condition } se attivo via debug
 
   // ---- Init --------------------------------------------------------------
   function init() {
@@ -30,6 +33,13 @@
 
     G.mountVase(vaseEl);
     G.mountFlowers(flowersLayer);
+
+    refreshWeather();
+    // Ricontrolla ogni minuto: l'ora reale può cambiare fascia mentre la tab è aperta.
+    setInterval(refreshWeather, 60 * 1000);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refreshWeather();
+    });
 
     refreshUI();
 
@@ -58,6 +68,12 @@
       dayCounterEl.style.display = "none";
     }
 
+    if (CONFIG.debug) updateDbgInfo();
+  }
+
+  function refreshWeather() {
+    if (!W) return;
+    currentWeather = W.apply(root, debugWeatherOverride);
     if (CONFIG.debug) updateDbgInfo();
   }
 
@@ -103,6 +119,9 @@
       <button data-act="advance" title="Simula un giorno in più">+1g</button>
       <button data-act="back" title="Torna indietro di uno stadio">-1</button>
       <button data-act="reset" title="Reset completo">Reset</button>
+      <button data-act="cycle-time" title="Cambia fascia oraria">Ora</button>
+      <button data-act="cycle-weather" title="Cambia meteo">Meteo</button>
+      <button data-act="auto-weather" title="Ripristina meteo automatico">Auto</button>
       <span class="dbg-info"></span>
     `;
     debugPanel.addEventListener("click", (ev) => {
@@ -116,6 +135,27 @@
       } else if (act === "reset") {
         S.reset();
         state = S.load();
+      } else if (act === "cycle-time") {
+        const order = ["dawn", "day", "sunset", "night"];
+        const cur = (debugWeatherOverride || currentWeather || {}).time || "day";
+        const next = order[(order.indexOf(cur) + 1) % order.length];
+        debugWeatherOverride = {
+          time: next,
+          condition: (debugWeatherOverride || currentWeather || {}).condition || "clear"
+        };
+        refreshWeather();
+      } else if (act === "cycle-weather") {
+        const order = ["clear", "cloudy", "rain"];
+        const cur = (debugWeatherOverride || currentWeather || {}).condition || "clear";
+        const next = order[(order.indexOf(cur) + 1) % order.length];
+        debugWeatherOverride = {
+          time: (debugWeatherOverride || currentWeather || {}).time || "day",
+          condition: next
+        };
+        refreshWeather();
+      } else if (act === "auto-weather") {
+        debugWeatherOverride = null;
+        refreshWeather();
       }
       refreshUI();
       updateDbgInfo();
@@ -126,7 +166,9 @@
   function updateDbgInfo() {
     const info = debugPanel.querySelector(".dbg-info");
     if (!info) return;
-    info.textContent = `${state.daysWatered}/7 · last=${state.lastWateredDate || "—"}`;
+    const w = currentWeather || { time: "?", condition: "?" };
+    const wTag = debugWeatherOverride ? "🔒" : "";
+    info.textContent = `${state.daysWatered}/7 · last=${state.lastWateredDate || "—"} · ${w.time}/${w.condition}${wTag}`;
   }
 
   // ---- Go ----------------------------------------------------------------
