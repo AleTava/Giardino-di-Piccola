@@ -73,8 +73,64 @@
 
   function refreshWeather() {
     if (!W) return;
+    const prev = currentWeather;
     currentWeather = W.apply(root, debugWeatherOverride);
     if (CONFIG.debug) updateDbgInfo();
+    maybeShowWeatherMessage(prev);
+  }
+
+  // Messaggi meteo: una sola volta al giorno per ognuno, e solo quando lo
+  // stato è "appena cambiato" (non li riproponiamo ad ogni interval refresh).
+  //  - duringRain: oggi piove e l'apertura/transizione è appena avvenuta.
+  //  - postRain:   è il giorno dopo una pioggia che lei ha visto.
+  const STORAGE_RAIN_MSG = "giardino_rain_msg_shown";
+  const STORAGE_POSTRAIN_MSG = "giardino_postrain_msg_shown";
+  function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+  }
+  function readLS(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function writeLS(key, v) { try { localStorage.setItem(key, v); } catch (e) {} }
+  function debugClearMessageFlags() {
+    try {
+      localStorage.removeItem(STORAGE_RAIN_MSG);
+      localStorage.removeItem(STORAGE_POSTRAIN_MSG);
+    } catch (e) {}
+  }
+
+  function maybeShowWeatherMessage(prev) {
+    if (!currentWeather) return;
+    const cfg = CONFIG.weatherMessages || {};
+    if (cfg.enabled === false) return;
+
+    const today = todayKey();
+    const isRain = currentWeather.condition === "rain";
+    const isPostRain = !!currentWeather.postRain;
+    const wasRain = !!(prev && prev.condition === "rain");
+    const wasPostRain = !!(prev && prev.postRain);
+
+    if (isRain && cfg.duringRain) {
+      const justBecame = !prev || !wasRain;
+      if (justBecame && readLS(STORAGE_RAIN_MSG) !== today) {
+        showWeatherMessage(cfg.duringRain, "rain-msg");
+        writeLS(STORAGE_RAIN_MSG, today);
+      }
+    } else if (isPostRain && cfg.postRain) {
+      const justBecame = !prev || !wasPostRain;
+      if (justBecame && readLS(STORAGE_POSTRAIN_MSG) !== today) {
+        showWeatherMessage(cfg.postRain, "post-rain");
+        writeLS(STORAGE_POSTRAIN_MSG, today);
+      }
+    }
+  }
+  function showWeatherMessage(text, toneClass) {
+    messageCard.textContent = text;
+    messageCard.className = "message-card " + toneClass + " visible";
+    setTimeout(() => {
+      if (messageCard.classList.contains(toneClass)) {
+        messageCard.classList.remove("visible");
+      }
+    }, 7000);
   }
 
   // ---- Actions -----------------------------------------------------------
@@ -122,6 +178,7 @@
       <button data-act="cycle-time" title="Cambia fascia oraria">Ora</button>
       <button data-act="cycle-weather" title="Cambia meteo">Meteo</button>
       <button data-act="auto-weather" title="Ripristina meteo automatico">Auto</button>
+      <button data-act="postrain" title="Simula 'ieri ha piovuto'">Post🌧</button>
       <span class="dbg-info"></span>
     `;
     debugPanel.addEventListener("click", (ev) => {
@@ -143,6 +200,7 @@
           time: next,
           condition: (debugWeatherOverride || currentWeather || {}).condition || "clear"
         };
+        debugClearMessageFlags();
         refreshWeather();
       } else if (act === "cycle-weather") {
         const order = ["clear", "cloudy", "rain"];
@@ -152,9 +210,30 @@
           time: (debugWeatherOverride || currentWeather || {}).time || "day",
           condition: next
         };
+        debugClearMessageFlags();
         refreshWeather();
       } else if (act === "auto-weather") {
         debugWeatherOverride = null;
+        debugClearMessageFlags();
+        refreshWeather();
+      } else if (act === "postrain") {
+        // Simula che ieri abbia visto la pioggia: scrive ieri in localStorage
+        // e forza meteo di oggi a non-pioggia. Cliccare di nuovo annulla.
+        const RAIN_KEY = "giardino_last_rain_seen";
+        const d = new Date(); d.setDate(d.getDate() - 1);
+        const yKey = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        if (localStorage.getItem(RAIN_KEY) === yKey) {
+          localStorage.removeItem(RAIN_KEY);
+        } else {
+          localStorage.setItem(RAIN_KEY, yKey);
+          if (!debugWeatherOverride || debugWeatherOverride.condition === "rain") {
+            debugWeatherOverride = {
+              time: (debugWeatherOverride || currentWeather || {}).time || "day",
+              condition: "clear"
+            };
+          }
+        }
+        debugClearMessageFlags();
         refreshWeather();
       }
       refreshUI();
@@ -168,7 +247,8 @@
     if (!info) return;
     const w = currentWeather || { time: "?", condition: "?" };
     const wTag = debugWeatherOverride ? "🔒" : "";
-    info.textContent = `${state.daysWatered}/7 · last=${state.lastWateredDate || "—"} · ${w.time}/${w.condition}${wTag}`;
+    const pr = w.postRain ? " · post🌧" : "";
+    info.textContent = `${state.daysWatered}/7 · last=${state.lastWateredDate || "—"} · ${w.time}/${w.condition}${wTag}${pr}`;
   }
 
   // ---- Go ----------------------------------------------------------------
