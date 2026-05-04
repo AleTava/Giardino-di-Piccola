@@ -16,7 +16,7 @@ window.GIARDINO_CONFIG = {
 
   // -------- NOME ----------------------------------------------------------
   // Il nome che apparirà nel titolo ("Il giardino di ...").
-  girlfriendName: "[Piccola]",
+  girlfriendName: "Piccola",
 
 
   // -------- MESSAGGI GIORNALIERI ------------------------------------------
@@ -38,11 +38,11 @@ window.GIARDINO_CONFIG = {
   // type può essere: "text" (solo testo lungo) oppure "image" (testo + immagine).
   finalSurprise: {
     type: "text",
-    title: "[Per la mia Piccola]",
+    title: "Per la mia Piccola",
     content:
-      "[Ciao piccolina mia, spero che questo bouquet ti sia piaciuto.]\n\n" +
-      "[Il mio cuore batte forte per te, quando è vicino a te, in presenza dei tuoi dolci pensieri e dei tuoi gesti]\n\n" +
-      "[Ti amo tanto tanto tanto. 10^10^25 volte ti amo. Ora baciami forte.]",
+      "iao piccolina mia, spero che questo bouquet ti sia piaciuto.\n\n" +
+      "Il mio cuore batte forte per te, quando è vicino a te, in presenza dei tuoi dolci pensieri e dei tuoi gesti\n\n" +
+      "Ti amo tanto tanto tanto. 10^10^25 volte ti amo. Ora baciami forte.",
     // Opzionale: se vuoi mostrare anche un'immagine (es. una vostra foto),
     // mettila dentro /assets/ e scrivi qui il percorso. Altrimenti null.
     imageUrl: null
