@@ -615,6 +615,76 @@ html, body {
 .scene.weather-rain .meadow svg   { filter: brightness(0.88) saturate(1.18); }
 .scene.time-night.weather-rain .meadow svg { filter: brightness(0.45) saturate(1); }
 
+/* ---------- POST-PIOGGIA: rugiada + cielo terso + luce dorata ---------- */
+.dew {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6; /* sopra il bouquet (5), così le gocce sembrano posate sui petali */
+  overflow: hidden;
+}
+.dew-drop {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,
+    rgba(255,255,255,0.95) 0%,
+    rgba(220,240,255,0.55) 55%,
+    rgba(220,240,255,0) 80%);
+  box-shadow: 0 0 4px rgba(255,255,255,0.7);
+  animation: dew-shimmer 4s ease-in-out infinite alternate;
+}
+@keyframes dew-shimmer {
+  0%   { opacity: 0.35; transform: scale(0.85); }
+  100% { opacity: 1;    transform: scale(1.1); }
+}
+/* Di notte le gocce hanno un riverbero più freddo/lunare */
+.scene.time-night .dew-drop {
+  background: radial-gradient(circle at 35% 35%,
+    rgba(220,235,255,0.95) 0%,
+    rgba(180,210,250,0.5) 55%,
+    rgba(180,210,250,0) 80%);
+  box-shadow: 0 0 5px rgba(200,220,250,0.7);
+}
+
+/* Cielo un filo più saturo e luminoso (effetto "aria limpida dopo la pioggia") */
+.scene.post-rain .sky { filter: saturate(1.12) brightness(1.04); }
+/* Di notte non aumentiamo la luminosità del cielo (resterebbe innaturale), solo la saturazione */
+.scene.post-rain.time-night .sky { filter: saturate(1.15) brightness(1); }
+
+/* Sole con tonalità più dorata/calda */
+.scene.post-rain:not(.time-night) .sun {
+  filter: saturate(1.2) brightness(1.08) drop-shadow(0 0 12px rgba(255, 220, 150, 0.35));
+}
+
+/* Prato leggermente più vivido — separato per fascia per non rompere il tono notturno */
+.scene.post-rain.time-day .meadow svg    { filter: saturate(1.15) brightness(1.04); }
+.scene.post-rain.time-dawn .meadow svg   { filter: saturate(1.05) brightness(1) hue-rotate(-3deg); }
+.scene.post-rain.time-sunset .meadow svg { filter: saturate(1.2) brightness(0.92) hue-rotate(-8deg); }
+.scene.post-rain.time-night .meadow svg  { filter: saturate(0.95) brightness(0.55); }
+
+/* Card del messaggio post-pioggia: tono dorato/caldo */
+.message-card.post-rain {
+  background: linear-gradient(180deg, #fffdf6 0%, #f4f8e8 60%, #f8f4d8 100%);
+  border-color: #c8b878;
+  color: #5a4a22;
+}
+.scene.time-night .message-card.post-rain {
+  background: linear-gradient(180deg, rgba(40,42,55,0.95) 0%, rgba(50,52,40,0.95) 100%);
+  border-color: #8a8050;
+  color: #f1e6c8;
+}
+/* Card del messaggio durante-pioggia: tono blu/freddo "rifugio" */
+.message-card.rain-msg {
+  background: linear-gradient(180deg, #fbfdff 0%, #e6eef6 60%, #d4e2ec 100%);
+  border-color: #88a8c4;
+  color: #2a4868;
+}
+.scene.time-night .message-card.rain-msg {
+  background: linear-gradient(180deg, rgba(35,45,60,0.95) 0%, rgba(40,55,75,0.95) 100%);
+  border-color: #6a8aaa;
+  color: #d8e8f4;
+}
+
 /* ---------- HUD/CARD: leggibilità di notte ---------- */
 .scene.time-night .title-card,
 .scene.time-night .day-counter {
