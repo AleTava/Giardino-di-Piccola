@@ -412,6 +412,231 @@ html, body {
   .debug-panel .dbg-info { display: none; }
 }
 
+/* =========================================================================
+   METEO & FASCE ORARIE
+   ======================================================================= */
+
+/* ---------- CIELO per fascia oraria ---------- */
+/* "day" è il default già definito su .sky, quindi non serve override */
+.scene.time-dawn .sky {
+  background: linear-gradient(180deg,
+    #f4a896 0%,
+    #f7c2a8 28%,
+    #f8d8be 58%,
+    #f4e5cc 100%);
+}
+.scene.time-sunset .sky {
+  background: linear-gradient(180deg,
+    #5a4072 0%,
+    #b66878 35%,
+    #e89a70 68%,
+    #f4c498 100%);
+}
+.scene.time-night .sky {
+  background: linear-gradient(180deg,
+    #0c1830 0%,
+    #182848 45%,
+    #2a3a60 78%,
+    #3a4870 100%);
+}
+
+/* Transizione dolce quando cambia fascia */
+.sky { transition: background 1.4s ease; }
+
+/* ---------- SOLE / LUNA ---------- */
+.scene.time-dawn .sun {
+  top: 48%; left: 10%; right: auto;
+  width: 100px; height: 100px;
+  background: radial-gradient(circle,
+    rgba(255,200,160,0.95) 0%,
+    rgba(255,180,140,0.3) 55%,
+    rgba(255,180,140,0) 75%);
+}
+.scene.time-sunset .sun {
+  top: 52%; right: 10%;
+  width: 130px; height: 130px;
+  background: radial-gradient(circle,
+    rgba(255,170,110,0.95) 0%,
+    rgba(255,140,90,0.32) 55%,
+    rgba(255,140,90,0) 75%);
+}
+/* Di notte, il sole diventa la luna */
+.scene.time-night .sun {
+  top: 11%; right: 14%;
+  width: 78px; height: 78px;
+  background: radial-gradient(circle at 35% 35%,
+    #f6f1d6 0%,
+    #e8dfb8 55%,
+    rgba(232,223,184,0) 72%);
+  filter: blur(0.4px);
+  animation: moon-glow 9s ease-in-out infinite alternate;
+}
+@keyframes moon-glow {
+  from { transform: scale(1);    opacity: 0.92; }
+  to   { transform: scale(1.04); opacity: 1; }
+}
+
+/* Sole nascosto dietro nuvole pesanti durante la pioggia (non sparisce, si attenua) */
+.scene.weather-rain:not(.time-night) .sun { opacity: 0.45; filter: blur(3px); }
+.scene.weather-cloudy:not(.time-night) .sun { opacity: 0.7; filter: blur(2px); }
+
+/* ---------- NUVOLE per condizione/fascia ---------- */
+.scene.weather-cloudy .cloud {
+  filter: blur(2px) brightness(0.92);
+  opacity: 0.95;
+}
+.scene.weather-rain .cloud {
+  background:
+    radial-gradient(ellipse at 30% 50%, #b8b6b4 60%, transparent 62%) no-repeat,
+    radial-gradient(ellipse at 60% 40%, #a6a4a2 55%, transparent 58%) no-repeat,
+    radial-gradient(ellipse at 80% 60%, #948f8c 50%, transparent 55%) no-repeat;
+  filter: blur(2px);
+  opacity: 0.95;
+}
+.scene.time-night .cloud {
+  filter: blur(2.2px) brightness(0.4);
+  opacity: 0.55;
+}
+.scene.time-night.weather-rain .cloud {
+  background:
+    radial-gradient(ellipse at 30% 50%, #4a4858 60%, transparent 62%) no-repeat,
+    radial-gradient(ellipse at 60% 40%, #3a3848 55%, transparent 58%) no-repeat,
+    radial-gradient(ellipse at 80% 60%, #2a2838 50%, transparent 55%) no-repeat;
+  opacity: 0.85;
+}
+.scene.time-sunset .cloud {
+  filter: blur(2px) brightness(1) hue-rotate(-12deg) saturate(1.15);
+}
+.scene.time-dawn .cloud {
+  filter: blur(2px) hue-rotate(-4deg);
+}
+
+/* ---------- STELLE (notte) ---------- */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  background: #fff7d8;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #fff7d8;
+  animation: star-twinkle 3.6s ease-in-out infinite alternate;
+}
+@keyframes star-twinkle {
+  from { opacity: 0.25; }
+  to   { opacity: 1; }
+}
+
+/* ---------- PIOGGIA ---------- */
+.rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  overflow: hidden;
+}
+.rain-drop {
+  position: absolute;
+  top: -20px;
+  width: 2px;
+  height: 16px;
+  /* Default: scuro/blu-grigio, visibile su cieli chiari (alba/giorno/tramonto) */
+  background: linear-gradient(180deg,
+    rgba(50,72,100,0) 0%,
+    rgba(50,72,100,0.55) 45%,
+    rgba(70,95,130,0.92) 100%);
+  border-radius: 2px;
+  animation: rain-fall 0.8s linear infinite;
+}
+/* Di notte il cielo è scuro: usa gocce chiare per farle risaltare */
+.scene.time-night .rain-drop {
+  background: linear-gradient(180deg,
+    rgba(180,210,230,0) 0%,
+    rgba(180,210,230,0.6) 45%,
+    rgba(210,230,250,0.92) 100%);
+}
+/* Velatura grigia sul cielo durante la pioggia diurna (tempo nuvoloso/grigio) */
+.scene.weather-rain .sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(120, 130, 145, 0.32) 0%,
+    rgba(140, 150, 165, 0.18) 60%,
+    rgba(150, 160, 170, 0.05) 100%);
+  pointer-events: none;
+}
+.scene.time-night.weather-rain .sky::after { background: rgba(10, 18, 32, 0.25); }
+@keyframes rain-fall {
+  from { transform: translateY(0); }
+  to   { transform: translateY(110vh); }
+}
+
+/* ---------- LUCCIOLE (notte) ---------- */
+.fireflies {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff8a8 0%, rgba(255,248,168,0.55) 45%, rgba(255,248,168,0) 70%);
+  box-shadow: 0 0 9px #fff7a0, 0 0 18px rgba(255,238,140,0.5);
+  animation:
+    firefly-pulse var(--pulse-dur, 4.5s) ease-in-out infinite,
+    firefly-drift var(--drift-dur, 14s) ease-in-out infinite;
+}
+@keyframes firefly-pulse {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50%      { opacity: 1;    transform: scale(1.15); }
+}
+@keyframes firefly-drift {
+  0%   { translate: 0 0; }
+  25%  { translate: 18px -16px; }
+  50%  { translate: -12px -28px; }
+  75%  { translate: 14px -10px; }
+  100% { translate: 0 0; }
+}
+
+/* ---------- PRATO: tinte per fascia/condizione ---------- */
+.meadow svg { transition: filter 1.4s ease; }
+.scene.time-dawn .meadow svg    { filter: brightness(0.95) saturate(0.92) hue-rotate(-3deg); }
+.scene.time-sunset .meadow svg  { filter: brightness(0.85) saturate(1.1) hue-rotate(-8deg); }
+.scene.time-night .meadow svg   { filter: brightness(0.5)  saturate(0.85); }
+.scene.weather-cloudy .meadow svg { filter: brightness(0.92) saturate(0.85); }
+.scene.weather-rain .meadow svg   { filter: brightness(0.88) saturate(1.18); }
+.scene.time-night.weather-rain .meadow svg { filter: brightness(0.45) saturate(1); }
+
+/* ---------- HUD/CARD: leggibilità di notte ---------- */
+.scene.time-night .title-card,
+.scene.time-night .day-counter {
+  background: rgba(36, 32, 52, 0.78);
+  border-color: rgba(180, 170, 140, 0.35);
+  color: #f1e6c8;
+}
+.scene.time-night .title-name { color: #f4b8d0; }
+.scene.time-night .message-card {
+  background: rgba(36, 32, 52, 0.92);
+  border-color: rgba(180, 170, 140, 0.4);
+  color: #f1e6c8;
+}
+.scene.time-night .message-card.bloom {
+  background: linear-gradient(180deg, rgba(50,38,60,0.95) 0%, rgba(70,40,60,0.95) 100%);
+  border-color: #d49aa8;
+}
+.scene.time-night .message-card.already {
+  background: linear-gradient(180deg, rgba(40,40,60,0.95) 0%, rgba(40,55,75,0.95) 100%);
+  border-color: #9ac0d4;
+}
+
 /* ---------- RESPONSIVE MINIMO ---------- */
 @media (max-width: 720px) {
   .bouquet { width: 300px; height: 340px; }
