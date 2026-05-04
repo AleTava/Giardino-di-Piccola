@@ -23,13 +23,13 @@ window.GIARDINO_CONFIG = {
   // Esattamente 7 messaggi, uno per ogni giorno in cui cresce un fiore.
   // Tip: puoi usare \n per andare a capo dentro una frase.
   dailyMessages: [
-    "Giorno 1 — [Ciao amorino mio. Benvenuta in questo giardino speciale. Clicca ogni giorno sopra il vaso per far sbocciare un fiorellino. Un bacio! ]",
-    "Giorno 2 — [Oh un altro fiorellino! Come stai oggi? Mi manchi tanto. Ti amo tanto.]",
-    "Giorno 3 — [Sei così speciale. Il tuo sorriso fa sorridere le mie giornate!]",
-    "Giorno 4 — [Ciao bubi, sei proprio piccolissima. Vorrei stringerti forte forte forte]",
-    "Giorno 5 — [Lo sai che i papaveri sono alti alti altiiii.]",
-    "Giorno 6 — [Aaaaah, sei tutta da sbaciucchiare. Dalla testa ai piedi]",
-    "Giorno 7 — [Se sbocciasse un fiore ogni volta che ti penso ogni deserto ne sarebbe pieno.]"
+    "Giorno 1 — Ciao amorino mio. Benvenuta in questo giardino speciale. Clicca ogni giorno sopra il vaso per far sbocciare un fiorellino. Un bacio! ",
+    "Giorno 2 — Oh un altro fiorellino! Come stai oggi? Mi manchi tanto. Ti amo tanto.",
+    "Giorno 3 — Sei così speciale. Il tuo sorriso fa sorridere le mie giornate!",
+    "Giorno 4 — Ciao bubi, sei proprio piccolissima. Vorrei stringerti forte forte forte",
+    "Giorno 5 — Lo sai che i papaveri sono alti alti altiiii.",
+    "Giorno 6 — Aaaaah, sei tutta da sbaciucchiare. Dalla testa ai piedi",
+    "Giorno 7 — Se sbocciasse un fiore ogni volta che ti penso ogni deserto ne sarebbe pieno."
   ],
 
 
@@ -38,11 +38,11 @@ window.GIARDINO_CONFIG = {
   // type può essere: "text" (solo testo lungo) oppure "image" (testo + immagine).
   finalSurprise: {
     type: "text",
-    title: "Per la mia Piccola",
+    title: "[Per la mia Piccola]",
     content:
-      "iao piccolina mia, spero che questo bouquet ti sia piaciuto.\n\n" +
-      "Il mio cuore batte forte per te, quando è vicino a te, in presenza dei tuoi dolci pensieri e dei tuoi gesti\n\n" +
-      "Ti amo tanto tanto tanto. 10^10^25 volte ti amo. Ora baciami forte.",
+      "[Ciao piccolina mia, spero che questo bouquet ti sia piaciuto.]\n\n" +
+      "[Il mio cuore batte forte per te, quando è vicino a te, in presenza dei tuoi dolci pensieri e dei tuoi gesti]\n\n" +
+      "[Ti amo tanto tanto tanto. 10^10^25 volte ti amo. Ora baciami forte.]",
     // Opzionale: se vuoi mostrare anche un'immagine (es. una vostra foto),
     // mettila dentro /assets/ e scrivi qui il percorso. Altrimenti null.
     imageUrl: null
@@ -72,5 +72,20 @@ window.GIARDINO_CONFIG = {
   // Per testare: forza una fascia oraria ("dawn"|"day"|"sunset"|"night")
   // o un meteo ("clear"|"cloudy"|"rain"). Lascia null per il comportamento normale.
   forceTimeOfDay: null,
-  forceWeather: null
+  forceWeather: null,
+
+  // Per testare la modalità post-pioggia: true forza ON, false forza OFF, null = automatica.
+  forcePostRain: null,
+
+
+  // -------- MESSAGGI METEO ------------------------------------------------
+  // Messaggi dolci legati al meteo, una sola volta nel corso della giornata.
+  //  - duringRain: appare quando lei apre il sito mentre piove.
+  //  - postRain: appare il giorno DOPO che ha visto la pioggia, insieme
+  //    all'effetto rugiada sui fiori/erba e alla luce più dorata.
+  weatherMessages: {
+    enabled: true,
+    duringRain: "Oh no piccola! Corri corri tra le mie braccia, andiamo al riparo",
+    postRain: "Il peggio è passato. Possiamo ora uscire a farci una bella passeggiata, mano nella mano."
+  }
 };
