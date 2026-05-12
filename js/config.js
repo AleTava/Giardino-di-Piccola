@@ -77,6 +77,11 @@ window.GIARDINO_CONFIG = {
   // Per testare la modalità post-pioggia: true forza ON, false forza OFF, null = automatica.
   forcePostRain: null,
 
+  // Per testare la fase lunare di notte. Numero tra 0 e 1:
+  //   0 = luna nuova, 0.25 = primo quarto, 0.5 = piena, 0.75 = ultimo quarto.
+  // Lascia null per usare la fase reale dalla data.
+  forceMoonPhase: null,
+
 
   // -------- MESSAGGI METEO ------------------------------------------------
   // Messaggi dolci legati al meteo, una sola volta nel corso della giornata.

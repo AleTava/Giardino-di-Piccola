@@ -42,6 +42,21 @@
     return "rain";
   }
 
+  // Fase lunare reale dalla data.
+  // phase ∈ [0,1): 0 = luna nuova, 0.25 = primo quarto, 0.5 = piena, 0.75 = ultimo quarto.
+  // Riferimento: luna nuova del 6 gennaio 2000 18:14 UTC; ciclo sinodico 29.5306 giorni.
+  function getMoonPhase(date) {
+    const ref = Date.UTC(2000, 0, 6, 18, 14) / 86400000;
+    const now = (date || new Date()).getTime() / 86400000;
+    let phase = ((now - ref) / 29.5305882) % 1;
+    if (phase < 0) phase += 1;
+    return {
+      phase,
+      waxing: phase < 0.5,
+      illumination: (1 - Math.cos(phase * 2 * Math.PI)) / 2
+    };
+  }
+
   function getCurrent() {
     const now = new Date();
     const time = CONFIG.forceTimeOfDay || getTimeOfDay(now);
@@ -62,6 +77,14 @@
     ensureLayer(sceneEl, "stars",     buildStars,     time === "night");
     ensureLayer(sceneEl, "fireflies", buildFireflies, time === "night");
     ensureLayer(sceneEl, "rain",      buildRain,      condition === "rain");
+
+    if (time === "night") {
+      const forced = CONFIG.forceMoonPhase;
+      const phase = (typeof forced === "number") ? ((forced % 1) + 1) % 1 : getMoonPhase().phase;
+      // Mappa phase → translateX dell'ombra (in %): 0=copertura totale, ±100=fuori.
+      const shadowX = (phase <= 0.5) ? (-phase * 200) : ((1 - phase) * 200);
+      sceneEl.style.setProperty("--moon-shadow-x", shadowX.toFixed(1) + "%");
+    }
 
     return { time, condition };
   }
@@ -130,6 +153,7 @@
     apply,
     getCurrent,
     getTimeOfDay,
-    getCondition
+    getCondition,
+    getMoonPhase
   };
 })();

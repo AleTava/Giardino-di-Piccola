@@ -485,12 +485,32 @@ html, body {
 .scene.time-night .sun {
   top: 11%; right: 14%;
   width: 78px; height: 78px;
-  background: radial-gradient(circle at 35% 35%,
-    #f6f1d6 0%,
-    #e8dfb8 55%,
-    rgba(232,223,184,0) 72%);
-  filter: blur(0.4px);
+  background: radial-gradient(circle at 38% 35%,
+    #fdf8e8 0%,
+    #ede3c0 50%,
+    #d4c898 100%);
+  border-radius: 50%;
+  overflow: hidden;
+  filter: none;
+  box-shadow:
+    0 0 14px 6px rgba(230, 215, 155, 0.22),
+    0 0 32px 12px rgba(230, 215, 155, 0.10);
   animation: moon-glow 9s ease-in-out infinite alternate;
+}
+/* Fase lunare: un cerchio del colore del cielo notturno trasla orizzontalmente
+   sopra la luna per scolpire la silhouette giusta. La posizione è guidata da
+   --moon-shadow-x impostata da weather.js.
+   overflow:hidden sul parent garantisce che non spilli fuori dal disco. */
+.scene.time-night .sun::after {
+  content: '';
+  position: absolute;
+  inset: -4px;               /* leggermente più grande per coprire bene i bordi */
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #152338 60%, #1e3050 100%);
+  filter: blur(2.5px);       /* terminator morbido come quello reale */
+  transform: translateX(var(--moon-shadow-x, -100%));
+  transition: transform 1.4s ease;
+  pointer-events: none;
 }
 @keyframes moon-glow {
   from { transform: scale(1);    opacity: 0.92; }
