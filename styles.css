@@ -48,21 +48,42 @@ html, body {
   to   { transform: scale(1.08); opacity: 1; }
 }
 
-/* Nuvole: 3 forme che driftano lentamente */
+/* Nuvole: forme più voluminose e morbide */
 .cloud {
+  --cloud-color: #ffffff;
   position: absolute;
-  width: 280px; height: 80px;
-  background:
-    radial-gradient(ellipse at 30% 50%, #ffffff 60%, transparent 62%) no-repeat,
-    radial-gradient(ellipse at 60% 40%, #ffffff 55%, transparent 58%) no-repeat,
-    radial-gradient(ellipse at 80% 60%, #ffffff 50%, transparent 55%) no-repeat;
+  width: 240px; 
+  height: 70px;
+  background: var(--cloud-color);
+  border-radius: 70px;
   opacity: 0.85;
-  filter: blur(1.5px);
+  filter: blur(2px) drop-shadow(0 8px 16px rgba(0,0,0,0.06));
 }
 
-.cloud-1 { top: 12%; left: -300px; animation: drift 90s linear infinite; }
-.cloud-2 { top: 22%; left: -300px; animation: drift 130s linear infinite; animation-delay: -40s; transform: scale(0.7); }
-.cloud-3 { top: 6%;  left: -300px; animation: drift 160s linear infinite; animation-delay: -80s; transform: scale(1.2); }
+.cloud::before, .cloud::after {
+  content: '';
+  position: absolute;
+  background: var(--cloud-color);
+  border-radius: 50%;
+}
+
+.cloud::before {
+  width: 110px;
+  height: 110px;
+  top: -50px;
+  left: 30px;
+}
+
+.cloud::after {
+  width: 140px;
+  height: 140px;
+  top: -75px;
+  right: 35px;
+}
+
+.cloud-1 { top: 12%; left: -300px; --s: 1; animation: drift 90s linear infinite; transform: scale(var(--s)); }
+.cloud-2 { top: 22%; left: -300px; --s: 0.7; animation: drift 130s linear infinite; animation-delay: -40s; transform: scale(var(--s)); }
+.cloud-3 { top: 6%;  left: -300px; --s: 1.25; animation: drift 160s linear infinite; animation-delay: -80s; transform: scale(var(--s)); }
 
 @keyframes drift {
   from { transform: translateX(0) scale(var(--s, 1)); }
@@ -482,33 +503,32 @@ html, body {
 
 /* ---------- NUVOLE per condizione/fascia ---------- */
 .scene.weather-cloudy .cloud {
-  filter: blur(2px) brightness(0.92);
+  --cloud-color: #e2e8f0;
+  filter: blur(2.5px) drop-shadow(0 8px 16px rgba(0,0,0,0.1));
   opacity: 0.95;
 }
 .scene.weather-rain .cloud {
-  background:
-    radial-gradient(ellipse at 30% 50%, #b8b6b4 60%, transparent 62%) no-repeat,
-    radial-gradient(ellipse at 60% 40%, #a6a4a2 55%, transparent 58%) no-repeat,
-    radial-gradient(ellipse at 80% 60%, #948f8c 50%, transparent 55%) no-repeat;
-  filter: blur(2px);
+  --cloud-color: #a6a4a2;
+  filter: blur(2.5px) drop-shadow(0 10px 20px rgba(0,0,0,0.15));
   opacity: 0.95;
 }
 .scene.time-night .cloud {
-  filter: blur(2.2px) brightness(0.4);
+  --cloud-color: #ffffff;
+  filter: blur(2.5px) brightness(0.4) drop-shadow(0 8px 16px rgba(0,0,0,0.2));
   opacity: 0.55;
 }
 .scene.time-night.weather-rain .cloud {
-  background:
-    radial-gradient(ellipse at 30% 50%, #4a4858 60%, transparent 62%) no-repeat,
-    radial-gradient(ellipse at 60% 40%, #3a3848 55%, transparent 58%) no-repeat,
-    radial-gradient(ellipse at 80% 60%, #2a2838 50%, transparent 55%) no-repeat;
+  --cloud-color: #3a3848;
+  filter: blur(2.5px) drop-shadow(0 10px 20px rgba(0,0,0,0.25));
   opacity: 0.85;
 }
 .scene.time-sunset .cloud {
-  filter: blur(2px) brightness(1) hue-rotate(-12deg) saturate(1.15);
+  --cloud-color: #ffe6e6;
+  filter: blur(2px) drop-shadow(0 8px 16px rgba(180,90,90,0.1));
 }
 .scene.time-dawn .cloud {
-  filter: blur(2px) hue-rotate(-4deg);
+  --cloud-color: #fff0eb;
+  filter: blur(2px) drop-shadow(0 8px 16px rgba(180,120,90,0.08));
 }
 
 /* ---------- STELLE (notte) ---------- */
