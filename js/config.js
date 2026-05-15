@@ -73,6 +73,10 @@ window.GIARDINO_CONFIG = {
   // Lascia null per il comportamento normale.
   forceTimeOfDay: null,
 
+  // Per testare l'effetto giovedì senza aspettare il giorno giusto.
+  // true = si attiva sempre (ignora il giorno e il "già visto oggi").
+  forceThursday: false,
+
   // Per testare la fase lunare di notte. Numero tra 0 e 1:
   //   0 = luna nuova, 0.25 = primo quarto, 0.5 = piena, 0.75 = ultimo quarto.
   // Lascia null per usare la fase reale dalla data.

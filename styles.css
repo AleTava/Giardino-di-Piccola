@@ -35,6 +35,7 @@ html, body {
 
 .sun {
   position: absolute;
+  z-index: 2;             /* sopra le stelle (z=1) */
   top: 8%; right: 12%;
   width: 120px; height: 120px;
   background: radial-gradient(circle, rgba(255,240,200,0.95) 0%, rgba(255,240,200,0.3) 55%, rgba(255,240,200,0) 75%);
@@ -52,7 +53,8 @@ html, body {
 .cloud {
   --cloud-color: #ffffff;
   position: absolute;
-  width: 240px; 
+  z-index: 3;             /* sopra sole/luna (z=2) e stelle (z=1) */
+  width: 240px;
   height: 70px;
   background: var(--cloud-color);
   border-radius: 70px;
@@ -102,6 +104,7 @@ html, body {
 /* ---------- BOUQUET AREA ---------- */
 .bouquet-area {
   position: absolute;
+  z-index: 20;            /* sopra il campo di lavanda (z=6) */
   left: 50%;
   bottom: 6%;
   transform: translateX(-50%);
@@ -621,4 +624,163 @@ html, body {
   .title-name { font-size: 1.25rem; }
   .surprise-card { padding: 32px 24px; }
   .surprise-title { font-size: 1.7rem; }
+}
+
+/* =====================================================================
+   GIOVEDÌ DELLA LAVANDA
+   ===================================================================== */
+
+/* ---------- Campo di lavanda (prato pieno di spighe) ---------- */
+.thursday-field {
+  position: absolute;   /* ancorato a .scene, stessa stacking context del bouquet */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52vh;
+  pointer-events: none;
+  z-index: 6;    /* sopra prato/stelle/lucciole, dietro al bouquet (z=20) */
+  overflow: hidden;
+}
+.thursday-field-out {
+  animation: thursday-fadein 0.6s ease reverse forwards;
+}
+
+/* Wrapper: oscilla lateralmente come l'erba nel vento */
+.thursday-plant {
+  position: absolute;
+  bottom: 0;
+  transform-origin: bottom center;
+  animation: thursday-sway var(--sway-dur, 3.5s) ease-in-out infinite alternate;
+}
+@keyframes thursday-sway {
+  from { transform: rotate(calc(var(--sway-amt, 4deg) * -1)); }
+  to   { transform: rotate(var(--sway-amt, 4deg)); }
+}
+
+/* Inner: cresce dal basso */
+.thursday-plant-inner {
+  transform-origin: bottom center;
+  display: block;
+  animation: thursday-grow 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes thursday-grow {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* ---------- Petali di confetti ---------- */
+.thursday-petals {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+
+/* Singolo petalo: parte dal centro del bouquet e vola via */
+.thursday-petal {
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  width: var(--size, 9px);
+  height: calc(var(--size, 9px) * 1.75);
+  background: var(--color, #a87cd4);
+  border-radius: 50% 50% 42% 42%;
+  opacity: 0;
+  animation: thursday-explode 2s ease-out forwards;
+}
+@keyframes thursday-explode {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.15) rotate(0deg);
+  }
+  80% { opacity: 0.65; }
+  100% {
+    opacity: 0;
+    transform:
+      translate(calc(-50% + var(--tx, 20vw)), calc(-50% + var(--ty, -30vh)))
+      scale(1)
+      rotate(var(--rot, 180deg));
+  }
+}
+
+/* Overlay con la scritta gigante */
+.thursday-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 201;
+  background: rgba(90, 40, 150, 0.10);
+  backdrop-filter: blur(3px);
+  animation: thursday-fadein 0.7s ease both;
+}
+.thursday-overlay.thursday-out {
+  animation: thursday-fadein 0.5s ease reverse forwards;
+}
+@keyframes thursday-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.thursday-card {
+  position: relative;
+  text-align: center;
+  padding: 52px 72px;
+  background: linear-gradient(145deg,
+    rgba(243, 232, 255, 0.97) 0%,
+    rgba(214, 182, 252, 0.97) 100%);
+  border: 2px solid rgba(175, 125, 225, 0.55);
+  border-radius: 28px;
+  box-shadow:
+    0 28px 70px rgba(90, 30, 170, 0.22),
+    0 0 0 6px rgba(200, 160, 245, 0.18);
+  animation: thursday-pop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes thursday-pop {
+  from { transform: scale(0.35); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.thursday-emoji {
+  font-size: 3.8rem;
+  margin-bottom: 14px;
+  display: block;
+  animation: thursday-bounce 1.5s ease-in-out infinite;
+}
+@keyframes thursday-bounce {
+  0%, 100% { transform: translateY(0)    rotate(-4deg); }
+  50%       { transform: translateY(-10px) rotate(4deg); }
+}
+
+.thursday-text {
+  font-size: clamp(2rem, 5.5vw, 4rem);
+  font-weight: 800;
+  color: #3d1572;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-shadow: 0 3px 14px rgba(90, 30, 170, 0.18);
+}
+
+.thursday-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #9060c0;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.thursday-close:hover {
+  background: rgba(90, 30, 170, 0.12);
+  color: #4a1580;
 }
