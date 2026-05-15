@@ -517,30 +517,11 @@ html, body {
   to   { transform: scale(1.04); opacity: 1; }
 }
 
-/* Sole nascosto dietro nuvole pesanti durante la pioggia (non sparisce, si attenua) */
-.scene.weather-rain:not(.time-night) .sun { opacity: 0.45; filter: blur(3px); }
-.scene.weather-cloudy:not(.time-night) .sun { opacity: 0.7; filter: blur(2px); }
-
-/* ---------- NUVOLE per condizione/fascia ---------- */
-.scene.weather-cloudy .cloud {
-  --cloud-color: #e2e8f0;
-  filter: blur(2.5px) drop-shadow(0 8px 16px rgba(0,0,0,0.1));
-  opacity: 0.95;
-}
-.scene.weather-rain .cloud {
-  --cloud-color: #a6a4a2;
-  filter: blur(2.5px) drop-shadow(0 10px 20px rgba(0,0,0,0.15));
-  opacity: 0.95;
-}
+/* ---------- NUVOLE per fascia ---------- */
 .scene.time-night .cloud {
   --cloud-color: #ffffff;
   filter: blur(2.5px) brightness(0.4) drop-shadow(0 8px 16px rgba(0,0,0,0.2));
   opacity: 0.55;
-}
-.scene.time-night.weather-rain .cloud {
-  --cloud-color: #3a3848;
-  filter: blur(2.5px) drop-shadow(0 10px 20px rgba(0,0,0,0.25));
-  opacity: 0.85;
 }
 .scene.time-sunset .cloud {
   --cloud-color: #ffe6e6;
@@ -569,51 +550,6 @@ html, body {
 @keyframes star-twinkle {
   from { opacity: 0.25; }
   to   { opacity: 1; }
-}
-
-/* ---------- PIOGGIA ---------- */
-.rain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 4;
-  overflow: hidden;
-}
-.rain-drop {
-  position: absolute;
-  top: -20px;
-  width: 2px;
-  height: 16px;
-  /* Default: scuro/blu-grigio, visibile su cieli chiari (alba/giorno/tramonto) */
-  background: linear-gradient(180deg,
-    rgba(50,72,100,0) 0%,
-    rgba(50,72,100,0.55) 45%,
-    rgba(70,95,130,0.92) 100%);
-  border-radius: 2px;
-  animation: rain-fall 0.8s linear infinite;
-}
-/* Di notte il cielo è scuro: usa gocce chiare per farle risaltare */
-.scene.time-night .rain-drop {
-  background: linear-gradient(180deg,
-    rgba(180,210,230,0) 0%,
-    rgba(180,210,230,0.6) 45%,
-    rgba(210,230,250,0.92) 100%);
-}
-/* Velatura grigia sul cielo durante la pioggia diurna (tempo nuvoloso/grigio) */
-.scene.weather-rain .sky::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg,
-    rgba(120, 130, 145, 0.32) 0%,
-    rgba(140, 150, 165, 0.18) 60%,
-    rgba(150, 160, 170, 0.05) 100%);
-  pointer-events: none;
-}
-.scene.time-night.weather-rain .sky::after { background: rgba(10, 18, 32, 0.25); }
-@keyframes rain-fall {
-  from { transform: translateY(0); }
-  to   { transform: translateY(110vh); }
 }
 
 /* ---------- LUCCIOLE (notte) ---------- */
@@ -651,79 +587,6 @@ html, body {
 .scene.time-dawn .meadow svg    { filter: brightness(0.95) saturate(0.92) hue-rotate(-3deg); }
 .scene.time-sunset .meadow svg  { filter: brightness(0.85) saturate(1.1) hue-rotate(-8deg); }
 .scene.time-night .meadow svg   { filter: brightness(0.5)  saturate(0.85); }
-.scene.weather-cloudy .meadow svg { filter: brightness(0.92) saturate(0.85); }
-.scene.weather-rain .meadow svg   { filter: brightness(0.88) saturate(1.18); }
-.scene.time-night.weather-rain .meadow svg { filter: brightness(0.45) saturate(1); }
-
-/* ---------- POST-PIOGGIA: rugiada + cielo terso + luce dorata ---------- */
-.dew {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 6; /* sopra il bouquet (5), così le gocce sembrano posate sui petali */
-  overflow: hidden;
-}
-.dew-drop {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%,
-    rgba(255,255,255,0.95) 0%,
-    rgba(220,240,255,0.55) 55%,
-    rgba(220,240,255,0) 80%);
-  box-shadow: 0 0 4px rgba(255,255,255,0.7);
-  animation: dew-shimmer 4s ease-in-out infinite alternate;
-}
-@keyframes dew-shimmer {
-  0%   { opacity: 0.35; transform: scale(0.85); }
-  100% { opacity: 1;    transform: scale(1.1); }
-}
-/* Di notte le gocce hanno un riverbero più freddo/lunare */
-.scene.time-night .dew-drop {
-  background: radial-gradient(circle at 35% 35%,
-    rgba(220,235,255,0.95) 0%,
-    rgba(180,210,250,0.5) 55%,
-    rgba(180,210,250,0) 80%);
-  box-shadow: 0 0 5px rgba(200,220,250,0.7);
-}
-
-/* Cielo un filo più saturo e luminoso (effetto "aria limpida dopo la pioggia") */
-.scene.post-rain .sky { filter: saturate(1.12) brightness(1.04); }
-/* Di notte non aumentiamo la luminosità del cielo (resterebbe innaturale), solo la saturazione */
-.scene.post-rain.time-night .sky { filter: saturate(1.15) brightness(1); }
-
-/* Sole con tonalità più dorata/calda */
-.scene.post-rain:not(.time-night) .sun {
-  filter: saturate(1.2) brightness(1.08) drop-shadow(0 0 12px rgba(255, 220, 150, 0.35));
-}
-
-/* Prato leggermente più vivido — separato per fascia per non rompere il tono notturno */
-.scene.post-rain.time-day .meadow svg    { filter: saturate(1.15) brightness(1.04); }
-.scene.post-rain.time-dawn .meadow svg   { filter: saturate(1.05) brightness(1) hue-rotate(-3deg); }
-.scene.post-rain.time-sunset .meadow svg { filter: saturate(1.2) brightness(0.92) hue-rotate(-8deg); }
-.scene.post-rain.time-night .meadow svg  { filter: saturate(0.95) brightness(0.55); }
-
-/* Card del messaggio post-pioggia: tono dorato/caldo */
-.message-card.post-rain {
-  background: linear-gradient(180deg, #fffdf6 0%, #f4f8e8 60%, #f8f4d8 100%);
-  border-color: #c8b878;
-  color: #5a4a22;
-}
-.scene.time-night .message-card.post-rain {
-  background: linear-gradient(180deg, rgba(40,42,55,0.95) 0%, rgba(50,52,40,0.95) 100%);
-  border-color: #8a8050;
-  color: #f1e6c8;
-}
-/* Card del messaggio durante-pioggia: tono blu/freddo "rifugio" */
-.message-card.rain-msg {
-  background: linear-gradient(180deg, #fbfdff 0%, #e6eef6 60%, #d4e2ec 100%);
-  border-color: #88a8c4;
-  color: #2a4868;
-}
-.scene.time-night .message-card.rain-msg {
-  background: linear-gradient(180deg, rgba(35,45,60,0.95) 0%, rgba(40,55,75,0.95) 100%);
-  border-color: #6a8aaa;
-  color: #d8e8f4;
-}
 
 /* ---------- HUD/CARD: leggibilità di notte ---------- */
 .scene.time-night .title-card,

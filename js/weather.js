@@ -23,25 +23,6 @@
     return "night";
   }
 
-  // Hash deterministico stringa → [0,1)
-  function seededHash(str) {
-    let h = 2166136261;
-    for (let i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return ((h >>> 0) % 100000) / 100000;
-  }
-
-  function getCondition(date) {
-    const d = date || new Date();
-    const key = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-    const r = seededHash(key);
-    if (r < 0.60) return "clear";
-    if (r < 0.88) return "cloudy";
-    return "rain";
-  }
-
   // Fase lunare reale dalla data.
   // phase ∈ [0,1): 0 = luna nuova, 0.25 = primo quarto, 0.5 = piena, 0.75 = ultimo quarto.
   // Riferimento: luna nuova del 6 gennaio 2000 18:14 UTC; ciclo sinodico 29.5306 giorni.
@@ -60,23 +41,20 @@
   function getCurrent() {
     const now = new Date();
     const time = CONFIG.forceTimeOfDay || getTimeOfDay(now);
-    const condition = CONFIG.forceWeather || getCondition(now);
-    return { time, condition };
+    return { time };
   }
 
   const TIME_CLASSES = ["time-dawn", "time-day", "time-sunset", "time-night"];
-  const WEATHER_CLASSES = ["weather-clear", "weather-cloudy", "weather-rain"];
 
   function apply(sceneEl, override) {
     if (CONFIG.weatherEnabled === false) return null;
 
-    const { time, condition } = override || getCurrent();
-    sceneEl.classList.remove(...TIME_CLASSES, ...WEATHER_CLASSES);
-    sceneEl.classList.add("time-" + time, "weather-" + condition);
+    const { time } = override || getCurrent();
+    sceneEl.classList.remove(...TIME_CLASSES);
+    sceneEl.classList.add("time-" + time);
 
     ensureLayer(sceneEl, "stars",     buildStars,     time === "night");
     ensureLayer(sceneEl, "fireflies", buildFireflies, time === "night");
-    ensureLayer(sceneEl, "rain",      buildRain,      condition === "rain");
 
     if (time === "night") {
       const forced = CONFIG.forceMoonPhase;
@@ -86,7 +64,7 @@
       sceneEl.style.setProperty("--moon-shadow-x", shadowX.toFixed(1) + "%");
     }
 
-    return { time, condition };
+    return { time };
   }
 
   function ensureLayer(scene, className, factory, shouldExist) {
@@ -99,21 +77,6 @@
     } else if (!shouldExist && existing) {
       existing.remove();
     }
-  }
-
-  function buildRain() {
-    const layer = document.createElement("div");
-    const COUNT = 90;
-    for (let i = 0; i < COUNT; i++) {
-      const d = document.createElement("span");
-      d.className = "rain-drop";
-      d.style.left = (Math.random() * 100).toFixed(2) + "%";
-      d.style.animationDelay = (-Math.random() * 1.2).toFixed(2) + "s";
-      d.style.animationDuration = (0.55 + Math.random() * 0.45).toFixed(2) + "s";
-      d.style.opacity = (0.35 + Math.random() * 0.45).toFixed(2);
-      layer.appendChild(d);
-    }
-    return layer;
   }
 
   function buildStars() {
@@ -153,7 +116,6 @@
     apply,
     getCurrent,
     getTimeOfDay,
-    getCondition,
     getMoonPhase
   };
 })();

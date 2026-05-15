@@ -69,13 +69,9 @@ window.GIARDINO_CONFIG = {
 
   weatherEnabled: true,
 
-  // Per testare: forza una fascia oraria ("dawn"|"day"|"sunset"|"night")
-  // o un meteo ("clear"|"cloudy"|"rain"). Lascia null per il comportamento normale.
+  // Per testare: forza una fascia oraria ("dawn"|"day"|"sunset"|"night").
+  // Lascia null per il comportamento normale.
   forceTimeOfDay: null,
-  forceWeather: null,
-
-  // Per testare la modalità post-pioggia: true forza ON, false forza OFF, null = automatica.
-  forcePostRain: null,
 
   // Per testare la fase lunare di notte. Numero tra 0 e 1:
   //   0 = luna nuova, 0.25 = primo quarto, 0.5 = piena, 0.75 = ultimo quarto.
@@ -83,14 +79,4 @@ window.GIARDINO_CONFIG = {
   forceMoonPhase: null,
 
 
-  // -------- MESSAGGI METEO ------------------------------------------------
-  // Messaggi dolci legati al meteo, una sola volta nel corso della giornata.
-  //  - duringRain: appare quando lei apre il sito mentre piove.
-  //  - postRain: appare il giorno DOPO che ha visto la pioggia, insieme
-  //    all'effetto rugiada sui fiori/erba e alla luce più dorata.
-  weatherMessages: {
-    enabled: true,
-    duringRain: "Oh no piccola! Corri corri tra le mie braccia, andiamo al riparo",
-    postRain: "Il peggio è passato. Possiamo ora uscire a farci una bella passeggiata, mano nella mano."
-  }
 };
